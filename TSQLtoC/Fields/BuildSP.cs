@@ -1,54 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 
 namespace TSQLtoC
 {
 
-    
+
     class BuildSP
     {
 
         public string sStoredProcedure = @"
-        /*______________________________________________
-        * Object:  StoredProcedure ###PREFIX######NAME###
-        ________________________________________________*/
+/*______________________________________________
+   Object:  StoredProcedure ###PREFIX######NAME###
+________________________________________________*/
 
-        SET ANSI_NULLS ON
-        GO
+SET ANSI_NULLS ON
+GO
 
-        SET QUOTED_IDENTIFIER ON
-        GO
+SET QUOTED_IDENTIFIER ON
+GO
 
-        CREATE PROCEDURE ###SCHEMA###.###PREFIX######NAME###
-               ( @ScopeID bigint OUTPUT
-                 ###VARIABLES###
-               )
-        AS
+CREATE PROCEDURE ###SCHEMA###.###PREFIX######NAME###
+        ( @ScopeID bigint OUTPUT
+            ###VARIABLES###
+        )
+AS
 
-                DECLARE @flgDebug    BIT          = 0
-                   , @strSPName VARCHAR(128)
-                   , @rstrOwn_Msg VARCHAR(500) = ''
-                   , @rstrSQL_Msg VARCHAR(500) = ''
-                   , @rstr_1 VARCHAR(100) = ''
-                   , @ret_1 VARCHAR(100)
-                   , @ScopeID bigint = 0
+        DECLARE @flgDebug    BIT          = 0
+            , @strSPName VARCHAR(128)
+            , @rstrOwn_Msg VARCHAR(500) = ''
+            , @rstrSQL_Msg VARCHAR(500) = ''
+            , @rstr_1 VARCHAR(100) = ''
+            , @ret_1 VARCHAR(100)
 
-        BEGIN TRY
-          SET @strSPName = OBJECT_NAME(@@PROCID)
-          SET @flgDebug = 0
+BEGIN TRY
+    SET @strSPName = OBJECT_NAME(@@PROCID)
+    SET @flgDebug = 0
 
-          ###INSERTUPDATE###
+    ###INSERTUPDATE###
 
-          RETURN -1
-        END TRY
-        BEGIN CATCH
-          SET @rstrSQL_Msg = ERROR_MESSAGE()
-          SET @rstr_1 = CONVERT(VARCHAR, ERROR_NUMBER())
-          RETURN 0
-        END CATCH";
+    RETURN -1
+END TRY
+BEGIN CATCH
+    SET @rstrSQL_Msg = ERROR_MESSAGE()
+    SET @rstr_1 = CONVERT(VARCHAR, ERROR_NUMBER())
+    RETURN 0
+END CATCH";
 
         public BuildSP()
         {
@@ -79,7 +76,8 @@ namespace TSQLtoC
                                         .Select(s => s).Single();
 
                 sInsert = string.Format(@" INSERT INTO {0}.{1} ( {2}", cFPrimary.TABLE_SCHEMA, cFPrimary.TABLE_NAME, Environment.NewLine);
-            }catch( Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine("Error: {0} ", ex.Message);
             }
@@ -89,7 +87,7 @@ namespace TSQLtoC
             var lsf = Program.lcFields.Where(s => s.IS_PK == 0)
                                     .Select(s => s);
             cField last = lsf.Last();
-            foreach ( cField cfFields in lsf )
+            foreach (cField cfFields in lsf)
             {
                 sInsert += string.Format("      {0}", cfFields.COLUMN_NAME);
                 if (cfFields.Equals(last) == false) sInsert += " , ";
@@ -131,13 +129,13 @@ namespace TSQLtoC
                 sUpdate += string.Format(@"  SELECT  @ScopeID = @{0}  {1}", cFPrimary.COLUMN_NAME, Environment.NewLine);
                 sStoredProcedure = sStoredProcedure.Replace("###UPDATE###", sUpdate);
             }
-            catch( Exception ex )
+            catch (Exception ex)
             {
                 Console.WriteLine("Error: {0}", ex.Message);
             }
         }
 
-        private void ReplacePrimaryKey ()
+        private void ReplacePrimaryKey()
         {
             string sPrimaryKey = "";
             try
@@ -158,7 +156,7 @@ namespace TSQLtoC
 
                 sStoredProcedure = sStoredProcedure.Replace("###INSERTUPDATE###", sPrimaryKey);
             }
-            catch( Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Error in ReplacePrimaryKey {0}", ex.Message);
             }
@@ -169,9 +167,9 @@ namespace TSQLtoC
         {
             string sVariables = "";
 
-            foreach ( cField cF in Program.lcFields)
-                    {
-                sVariables += string.Format(@"      , @{0} {1}  {2}", cF.COLUMN_NAME, cF.SQL_STRING , Environment.NewLine );
+            foreach (cField cF in Program.lcFields)
+            {
+                sVariables += string.Format(@"      , @{0} {1}  {2}", cF.COLUMN_NAME, cF.SQL_STRING, Environment.NewLine);
             }
 
             sStoredProcedure = sStoredProcedure.Replace("###VARIABLES###", sVariables);

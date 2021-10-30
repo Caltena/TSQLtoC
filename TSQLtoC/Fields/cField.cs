@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TSQLtoC
+﻿namespace TSQLtoC
 {
     public class cField
     {
@@ -41,7 +35,7 @@ namespace TSQLtoC
             {
                 case "bigint":
                     C_STRING = "Int64";
-                    SQL_STRING = "BigInt" ;
+                    SQL_STRING = "BigInt";
                     break;
                 case "binary":
                     C_STRING = "Byte[]";
@@ -49,7 +43,7 @@ namespace TSQLtoC
                     break;
                 case "bit":
                     C_STRING = "Boolean";
-                    SQL_STRING = "Bit" ;
+                    SQL_STRING = "Bit";
                     break;
                 case "char":
                     C_STRING = "String";
@@ -158,7 +152,7 @@ namespace TSQLtoC
                     break;
                 case "xml":
                     C_STRING = "Xml";
-                    SQL_STRING = "Xml" ;
+                    SQL_STRING = "Xml";
                     break;
 
             }

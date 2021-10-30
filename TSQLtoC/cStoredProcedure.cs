@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TSQLtoC
 {
@@ -11,29 +8,29 @@ namespace TSQLtoC
         public string sStoredProcedure = string.Format(@"
 public string up###NAME###( ###VALUES###)
 {1}
-    if (OpenConnection())
+if (OpenConnection())
+{1}
+    SqlCommand cmd = new SqlCommand({0}up###NAME###{0}, connection);
+    cmd.CommandType = CommandType.StoredProcedure;
+    ###PARAM###
+    // output parm
+    SqlParameter vendor = cmd.Parameters.Add( {0}@ScopeID{0}, SqlDbType.Bigint );
+    vendor.Direction = ParameterDirection.Output;
+    try
     {1}
-        SqlCommand cmd = new SqlCommand({0}up###NAME###{0}, connection);
-        cmd.CommandType = CommandType.StoredProcedure;
-        ###PARAM###
-        // output parm
-        SqlParameter vendor = cmd.Parameters.Add( {0}@ScopeID{0}, SqlDbType.Bigint );
-        vendor.Direction = ParameterDirection.Output;
-        try
-        {1}
-            cmd.ExecuteNonQuery();
-        {2}
-        catch (Exception e)
-        {1}
-            connection.Close();
-
-        {2}
-        connection.Close();
-        return vendor.Value.ToString();
+        cmd.ExecuteNonQuery();
     {2}
-    return '';
+    catch (Exception e)
+    {1}
+        connection.Close();
 
-        {2}", "\"" ,"{" , "}");
+    {2}
+    connection.Close();
+    return vendor.Value.ToString();
+{2}
+return '';
+
+    {2}", "\"", "{", "}");
 
 
         public cStoredProcedure()
@@ -45,7 +42,7 @@ public string up###NAME###( ###VALUES###)
             foreach (cField cf in Program.lcFields)
             {
 
-                sPARAM += string.Format(@"              SqlParameter p{1} = cmd.Parameters.Add({0}@{1}{0}, SqlDbType.{2} );", "\"", cf.COLUMN_NAME , cf.SQL_STRING);
+                sPARAM += string.Format(@"              SqlParameter p{1} = cmd.Parameters.Add({0}@{1}{0}, SqlDbType.{2} );", "\"", cf.COLUMN_NAME, cf.SQL_STRING);
                 sPARAM += Environment.NewLine;
                 if (cf.CHARACTER_MAXIMUM_LENGTH != 0)
                 {
@@ -62,7 +59,7 @@ public string up###NAME###( ###VALUES###)
                 cfTe = cf;
             }
             sStoredProcedure = sStoredProcedure.Replace("###PARAM###", sPARAM);
-            sStoredProcedure = sStoredProcedure.Replace("###NAME###", cfTe.TABLE_NAME);
+            sStoredProcedure = sStoredProcedure.Replace("###NAME###", cfTe.TABLE_NAME.ToUpper());
 
             foreach (cField cf in Program.lcFields)
             {

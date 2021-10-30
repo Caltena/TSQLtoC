@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TSQLtoC
 {
@@ -24,7 +21,8 @@ namespace TSQLtoC
             this.Table = "Houses";
         }
 
-        public void run() { 
+        public void run()
+        {
             BuildConnectionString();
             Program.lcFields = ReadShowInfo();
         }
@@ -35,7 +33,7 @@ namespace TSQLtoC
         public string InitialCatalog { get; set; }
         public string DataSource { get; set; }
         public string Table { get; set; }
-
+        public string ConnectionString { get; set; }
 
         private void BuildConnectionString()
         {
@@ -46,6 +44,7 @@ namespace TSQLtoC
             builder.DataSource = this.DataSource;
             builder.IntegratedSecurity = this.IntegratedSecurity;
             connection.ConnectionString = builder.ConnectionString;
+            this.ConnectionString = connection.ConnectionString;
         }
 
         private List<cField> ReadShowInfo()
@@ -53,7 +52,7 @@ namespace TSQLtoC
 
             SqlCommand cmd = new SqlCommand();
             cmd.CommandText = string.Format(@" 
-                                 SELECT TABLE_CATALOG,
+                                    SELECT TABLE_CATALOG,
                                         TABLE_SCHEMA,
                                         COLUMN_NAME,
                                         DATA_TYPE,
@@ -87,7 +86,7 @@ namespace TSQLtoC
             List<cField> lT = new List<cField>();
             try
             {
-                
+
                 connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
                 // Call Read before accessing data.
@@ -95,7 +94,7 @@ namespace TSQLtoC
                 {
                     cField cT = new cField();
                     cT.TABLE_CATALOG = reader[0].ToString();
-                    cT.TABLE_SCHEMA =  reader[1].ToString();
+                    cT.TABLE_SCHEMA = reader[1].ToString();
                     cT.COLUMN_NAME = reader[2].ToString();
                     cT.CHARACTER_MAXIMUM_LENGTH = Convert.ToInt16(reader[4]);
                     cT.NUMERIC_PRECISION = Convert.ToInt16(reader[5]);
@@ -122,47 +121,6 @@ namespace TSQLtoC
             return lT;
         }
 
-
-
-        /*
-                public List<FilesToDelete> GetOldDMSFilesToDelete()
-                {
-
-                    List<FilesToDelete> cData = new List<FilesToDelete>();
-
-                    SqlCommand cmd = new SqlCommand();
-                    cmd.CommandText = "dbo.upList_DDF";
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Connection = connection;
-                    connection.Open();
-                    try
-                    {
-                        SqlDataReader reader = cmd.ExecuteReader();
-                        while (reader.Read())
-                        {
-                            FilesToDelete res = new FilesToDelete();
-                            res.DDL_Key = Convert.ToInt32(reader[0]);
-                            res.CLU_Key = Convert.ToInt32(reader[1]);
-                            res.sFileName = reader[2].ToString();
-                            cData.Add(res);
-                        }
-                        reader.Close();
-                    }
-                    catch (Exception e)
-                    {
-                        connection.Close();
-                    }
-                    finally
-                    {
-                        if (connection != null)
-                            connection.Close();
-                    }
-
-                    return cData;
-                }
-
-
-        */
 
         protected virtual void Dispose(bool disposing)
         {
