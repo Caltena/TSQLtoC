@@ -12,9 +12,9 @@ namespace TSQLtoC
         static void Main(string[] args)
         {
             cConnectDatabase cDB = new cConnectDatabase();
-            cDB.DataSource = @"CA-DESKTOP";
-            cDB.InitialCatalog = "AdventureWorks2019";
-            cDB.Table = "SpecialOffer";
+            cDB.DataSource = @"127.0.0.1";
+            cDB.InitialCatalog = "caltena";
+            cDB.Table = "Houses";
             cDB.run();
             BuildSP cSP = new BuildSP();
             cNotifikation cNO = new cNotifikation();
