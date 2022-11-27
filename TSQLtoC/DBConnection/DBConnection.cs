@@ -12,12 +12,11 @@ namespace TSQLtoC
 
         public cConnectDatabase()
         {
-            this.UserID = "SQL_2016_Prod";
-            this.Password = "anatevka";
-            this.InitialCatalog = "test";
-            this.DataSource = @"CALTENA-XPS13\SQLEXPRESS";
-            this.IntegratedSecurity = true;
-
+            this.UserID = "sa";
+            this.Password = "Ca#74412127!";
+            this.InitialCatalog = "caltena";
+            this.DataSource = @"127.0.0.1";
+            this.IntegratedSecurity = false;
             this.Table = "Houses";
         }
 
