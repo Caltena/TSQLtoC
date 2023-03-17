@@ -19,7 +19,7 @@ namespace TSQLtoC
             BuildSP cSP = new BuildSP();
             cNotifikation cNO = new cNotifikation();
             cStoredProcedure cCP = new cStoredProcedure();
-
+            // TEST TEST TEST TEST
             Console.WriteLine("{0}-------------------------------------------{0}", Environment.NewLine);
             Console.WriteLine(cSP.sStoredProcedure);
             Console.WriteLine("{0}-------------------------------------------{0}", Environment.NewLine);
